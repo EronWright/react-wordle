@@ -3,6 +3,7 @@ import { VALID_GUESSES } from '../constants/validGuesses'
 import { WRONG_SPOT_MESSAGE, NOT_CONTAINED_MESSAGE } from '../constants/strings'
 import { getGuessStatuses } from './statuses'
 import { default as GraphemeSplitter } from 'grapheme-splitter'
+import seedrandom from 'seedrandom';
 
 export const isWordInWordList = (word: string) => {
   return (
@@ -11,21 +12,17 @@ export const isWordInWordList = (word: string) => {
   )
 }
 
-export const isWinningWord = (word: string) => {
-  return solution === word
-}
-
 // build a set of previously revealed letters - present and correct
 // guess must use correct letters in that space and any other revealed letters
 // also check if all revealed instances of a letter are used (i.e. two C's)
-export const findFirstUnusedReveal = (word: string, guesses: string[]) => {
+export const findFirstUnusedReveal = (solution: string, word: string, guesses: string[]) => {
   if (guesses.length === 0) {
     return false
   }
 
   const lettersLeftArray = new Array<string>()
   const guess = guesses[guesses.length - 1]
-  const statuses = getGuessStatuses(guess)
+  const statuses = getGuessStatuses(solution, guess)
   const splitWord = unicodeSplit(word)
   const splitGuess = unicodeSplit(guess)
 
@@ -83,10 +80,24 @@ export const getWordOfDay = () => {
   const nextday = (index + 1) * msInDay + epochMs
 
   return {
-    solution: localeAwareUpperCase(WORDS[index % WORDS.length]),
+    solutionGenerator: getWordSequenceOfDay(index),
     solutionIndex: index,
     tomorrow: nextday,
   }
 }
 
-export const { solution, solutionIndex, tomorrow } = getWordOfDay()
+/**
+ * Generate a sequence of random words.
+ * @param solutionIndex the random seed; same seed, same words.
+ */
+export function *getWordSequenceOfDay(solutionIndex: number) {
+  // generate a sequence of random numbers as indices,
+  // based on the solution index as the seed.
+  const rng = seedrandom(solutionIndex.toString())
+  while (true) {
+    yield localeAwareUpperCase(WORDS[Math.abs(rng.int32()) % WORDS.length]);
+  }
+}
+
+export const { solutionGenerator, solutionIndex, tomorrow } = getWordOfDay()
+

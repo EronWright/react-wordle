@@ -10,18 +10,18 @@ const browser = parser.getBrowser()
 const device = parser.getDevice()
 
 export const shareStatus = (
-  guesses: string[],
-  lost: boolean,
-  isHardMode: boolean,
-  isDarkMode: boolean,
-  isHighContrastMode: boolean,
-  handleShareToClipboard: () => void
-) => {
+    solution: string,
+    guesses: string[],
+    lost: boolean,
+    isHardMode: boolean,
+    isDarkMode: boolean,
+    isHighContrastMode: boolean
+    , handleShareToClipboard: () => void) => {
   const textToShare =
     `${GAME_TITLE} ${solutionIndex} ${
       lost ? 'X' : guesses.length
     }/${MAX_CHALLENGES}${isHardMode ? '*' : ''}\n\n` +
-    generateEmojiGrid(guesses, getEmojiTiles(isDarkMode, isHighContrastMode))
+    generateEmojiGrid(solution, guesses, getEmojiTiles(isDarkMode, isHighContrastMode))
 
   const shareData = { text: textToShare }
 
@@ -42,10 +42,10 @@ export const shareStatus = (
   }
 }
 
-export const generateEmojiGrid = (guesses: string[], tiles: string[]) => {
+export const generateEmojiGrid = (solution: string, guesses: string[], tiles: string[]) => {
   return guesses
     .map((guess) => {
-      const status = getGuessStatuses(guess)
+      const status = getGuessStatuses(solution, guess)
       const splitGuess = unicodeSplit(guess)
 
       return splitGuess

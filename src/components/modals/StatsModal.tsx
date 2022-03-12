@@ -15,10 +15,10 @@ import {
 type Props = {
   isOpen: boolean
   handleClose: () => void
+  solution: string
   guesses: string[]
   gameStats: GameStats
-  isGameLost: boolean
-  isGameWon: boolean
+  isGameOver: boolean
   handleShareToClipboard: () => void
   isHardMode: boolean
   isDarkMode: boolean
@@ -29,10 +29,10 @@ type Props = {
 export const StatsModal = ({
   isOpen,
   handleClose,
+  solution,
   guesses,
   gameStats,
-  isGameLost,
-  isGameWon,
+  isGameOver,
   handleShareToClipboard,
   isHardMode,
   isDarkMode,
@@ -64,7 +64,7 @@ export const StatsModal = ({
         gameStats={gameStats}
         numberOfGuessesMade={numberOfGuessesMade}
       />
-      {(isGameLost || isGameWon) && (
+      {isGameOver && (
         <div className="mt-5 sm:mt-6 columns-2 dark:text-white">
           <div>
             <h5>{NEW_WORD_TEXT}</h5>
@@ -78,14 +78,7 @@ export const StatsModal = ({
             type="button"
             className="mt-2 w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
             onClick={() => {
-              shareStatus(
-                guesses,
-                isGameLost,
-                isHardMode,
-                isDarkMode,
-                isHighContrastMode,
-                handleShareToClipboard
-              )
+              shareStatus(solution, guesses, false, isHardMode, isDarkMode, isHighContrastMode, handleShareToClipboard)
             }}
           >
             {SHARE_TEXT}

@@ -1,9 +1,17 @@
+
 const gameStateKey = 'gameState'
 const highContrastKey = 'highContrast'
 
-type StoredGameState = {
+export type StoredGameState = {
+  // overall game state
+  solutionIndex: number
+  deadline?: number
+  completed: string[]
+
+  // state of the current round
   guesses: string[]
   solution: string
+  nextSolution: string
 }
 
 export const saveGameStateToLocalStorage = (gameState: StoredGameState) => {
